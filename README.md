@@ -4,12 +4,17 @@ TestBot-GPT is a software testing solution that utilizes GPT (Generative Pre-tra
 
 ## Installation
 
+`Poetry` is the dependency management tool used in this project. You need to setup before running the below commands.
+Follow the instructions on [this](https://python-poetry.org/docs/) page to setup Poetry.
+
 ```
 git clone https://github.com/rijuvijayan87/testbot-gpt.git
 cd testbot-gpt
 poetry install
 cp .env_example .env
 ```
+
+> Replace the value `[OPENAI_API_KEY]` in `.env` file with the API token generated from https://platform.openai.com/account/api-keys
 
 ## usage
 
