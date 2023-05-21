@@ -4,6 +4,9 @@ TestBot-GPT is a software testing solution that utilizes GPT (Generative Pre-tra
 
 ## Installation
 
+`Poetry` is the dependency management tool used in this project. You need to setup before running the below commands.
+Follow the instructions on [this](https://python-poetry.org/docs/) page to setup Poetry.
+
 ```
 git clone https://github.com/rijuvijayan87/testbot-gpt.git
 cd testbot-gpt
