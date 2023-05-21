@@ -11,6 +11,8 @@ poetry install
 cp .env_example .env
 ```
 
+> Replace the value `[OPENAI_API_KEY]` in `.env` file with the API token generated from https://platform.openai.com/account/api-keys
+
 ## usage
 
 ```
