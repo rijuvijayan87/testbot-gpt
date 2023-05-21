@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "testbot-gpt"
+version = "0.1.0"
+description = "GPT based AI tool to solve software testing problems."
+authors = ["Riju Vijayan <rijuvijayan@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "testbot_gpt"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+openai = "^0.27.7"
+python-dotenv = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
