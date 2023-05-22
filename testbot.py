@@ -5,7 +5,12 @@ import sys
 import openai
 from dotenv import load_dotenv
 
-load_dotenv()
+
+def configure() -> None:
+    """Loading environment variable from env file"""
+    load_dotenv()
+
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
@@ -14,7 +19,6 @@ def show_options() -> None:
     This function displays different option about how this script can be used
     """
     user_prompt: str = "Usage: python testbot.py -i <inputfile> -o <outputfile>"
-
     if len(sys.argv) != 2:
         print(
             f"Error! Invalid number of arguments provided. Correct {user_prompt}",
@@ -36,4 +40,11 @@ def show_options() -> None:
             print(f"ofile name is : {arg}")
 
 
-show_options()
+def main() -> None:
+    """Main function"""
+    configure()
+    show_options()
+
+
+if __name__ == "__main__":
+    main()
