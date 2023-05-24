@@ -20,7 +20,7 @@ GENERATED_TEST_FILE_LOCATION = "ai/tests/generated_test_file.py"
 messages: list[dict[str, str]] = []
 system_message = {
     "role": "system",
-    "content": """you are a software tester. 
+    "content": """your name is TestBot. you are a software tester. 
                     Your focus is in building and developing automation tools 
                     to perform software testing""",
 }
@@ -69,27 +69,29 @@ def extract_code(text) -> str:
     return text[start_index:end_index]
 
 
+def send_command_to_openapi_and_display_progress_bar(command: str, sleep_time=1):
+    print("hmmm. let me think! \n")
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future = executor.submit(chat_bot, command)
+        with tqdm(
+            total=100, ncols=80, unit="%", bar_format="{percentage:.0f}%|{bar}|"
+        ) as progress_bar:
+            while not future.done():
+                time.sleep(sleep_time)
+                progress_bar.update(1)
+            return future.result()
+
+
 def generate_tests() -> str:
     """Generating automated tests by reading yaml files"""
-    file_location = input("Enter file location to the swagger yaml file : ")
+    file_location = input("\nOk. Give me the location to your swagger yaml file.. -> ")
     print(f"\nSchema file location  -> {file_location} \n ", file=stdout)
 
     try:
         with open(file_location, "r", -1, encoding="utf_8") as file:
             contents = file.read()
-            print("hmmm. let me think! \n")
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                future = executor.submit(
-                    chat_bot,
-                    f"provide automated tests written in python for this swagger specs : \n {contents}",
-                )
-                with tqdm(
-                    total=100, ncols=80, unit="%", bar_format="{percentage:.0f}%|{bar}|"
-                ) as progress_bar:
-                    while not future.done():
-                        time.sleep(1)
-                        progress_bar.update(1)
-                    test_code = future.result()
+            command = f"provide automated tests written in python for this swagger specs : \n {contents}"
+            test_code = send_command_to_openapi_and_display_progress_bar(command)
             return extract_code(test_code)
     except FileNotFoundError:
         print("File not found, please check the file path.")
@@ -108,37 +110,55 @@ def write_file(content: str) -> None:
         print("Writing tests to file failed. Please try again later", file=sys.stderr)
 
 
-user_input = ""
-while True:
+def display_user_prompts() -> str:
     user_input = input(
-        """ Pick an option?: 
-        1) Ask questions interactively
-        2) Generate tests
-        3) Generate Code snippets
+        """\n Pick an option?: 
+            1) Ask questions interactively
+            2) Generate tests
+            3) Generate Code snippets
+            4) Quit
 
-        (1/2/3) ? : """
+            (1/2/3/4) ? --> """
     )
-    chosen_option: str = ""
+    return user_input
 
-    match user_input:
-        case "1":
-            chosen_option = "ask"
-            break
-        case "2":
-            chosen_option = "generate tests"
-            code = generate_tests()
-            if code is None:
-                print("Error, tests could not be generated, try again", sys.stderr)
-            print(f"Generated tests -> \n {code}")
-            print(
-                f"\n Tests are generated in a file located here -> {GENERATED_TEST_FILE_LOCATION} \n"
-            )
-            write_file(code)
 
-            break
-        case "3":
-            chosen_option = "code"
-            break
-        case _:
-            print("Type a number 1-3")
-            continue
+def main():
+    user_input = ""
+    while True:
+        user_input = display_user_prompts()
+
+        match user_input:
+            case "1":
+                while True:
+                    command = input("\n ask away -> ")
+                    if user_input.lower() == "quit":
+                        print("\n bye..See you later \n")
+                        sys.exit()
+                    if command.lower() == "return":
+                        break
+                    answer_from_ai = send_command_to_openapi_and_display_progress_bar(
+                        command
+                    )
+                    print(f"\n {answer_from_ai}")
+            case "2":
+                code = generate_tests()
+                if code is None:
+                    print("Error, tests could not be generated, try again", sys.stderr)
+                print(f"Generated tests -> \n {code}")
+                print(
+                    f"\n Tests are generated in a file located here -> {GENERATED_TEST_FILE_LOCATION} \n"
+                )
+                write_file(code)
+            case "3":
+                print(3)
+            case "4":
+                print("\n bye..See you later \n")
+                break
+            case _:
+                print("Type a number 1-3")
+                continue
+
+
+if __name__ == "__main__":
+    main()
