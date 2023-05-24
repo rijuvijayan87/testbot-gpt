@@ -15,6 +15,8 @@ def configure() -> None:
     load_dotenv()
 
 
+GENERATED_TEST_FILE_LOCATION = "ai/tests/generated_test_file.py"
+
 messages: list[dict[str, str]] = []
 system_message = {
     "role": "system",
@@ -35,8 +37,6 @@ def chat_bot(question: str) -> str:
     """
     global messages
     messages.append({"role": "user", "content": question})
-
-    print(f"questions_history -> {messages}")
 
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -71,8 +71,8 @@ def extract_code(text) -> str:
 
 def generate_tests() -> str:
     """Generating automated tests by reading yaml files"""
-    file_location = input("Enter file location to the swagger yaml file : \n")
-    print(f" File name -> {file_location} \n ", file=stdout)
+    file_location = input("Enter file location to the swagger yaml file : ")
+    print(f"\nSchema file location  -> {file_location} \n ", file=stdout)
 
     try:
         with open(file_location, "r", -1, encoding="utf_8") as file:
@@ -98,8 +98,10 @@ def generate_tests() -> str:
 
 def write_file(content: str) -> None:
     """Writing contents into a file"""
+    os.makedirs(os.path.dirname(GENERATED_TEST_FILE_LOCATION), exist_ok=True)
+
     try:
-        with open("files/tests.py", "w", -1, encoding="utf_8") as file:
+        with open(GENERATED_TEST_FILE_LOCATION, "w", -1, encoding="utf_8") as file:
             file.write(content)
             file.close()
     except FileNotFoundError:
@@ -129,7 +131,7 @@ while True:
                 print("Error, tests could not be generated, try again", sys.stderr)
             print(f"Generated tests -> \n {code}")
             print(
-                "\n Tests are generated in a file located here -> (files/tests.py) \n"
+                f"\n Tests are generated in a file located here -> {GENERATED_TEST_FILE_LOCATION} \n"
             )
             write_file(code)
 
