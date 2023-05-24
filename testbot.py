@@ -70,7 +70,7 @@ def extract_code(text) -> str:
 
 
 def send_command_to_openapi_and_display_progress_bar(command: str, sleep_time=1):
-    print("hmmm. let me think! \n")
+    print("hold on. waiting for a response.. \n")
     with concurrent.futures.ThreadPoolExecutor() as executor:
         future = executor.submit(chat_bot, command)
         with tqdm(
@@ -154,7 +154,7 @@ def main():
                 print(3)
             case "4":
                 print("\n bye..See you later \n")
-                break
+                sys.exit()
             case _:
                 print("Type a number 1-3")
                 continue
