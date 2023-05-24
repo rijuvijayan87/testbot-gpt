@@ -1,48 +1,57 @@
-import pytest
+import json
+
 import requests
 
-# Set up the base URL for the API
-BASE_URL = "http://petstore.swagger.io/v1"
+# Define the base URL of the API
+base_url = "http://petstore.swagger.io/v1"
 
 
-# Test case for listing all pets
+# Test the listPets endpoint
 def test_list_pets():
-    # Send GET request to /pets endpoint
-    response = requests.get(BASE_URL + "/pets")
+    # Define the URL of the endpoint
+    url = base_url + "/pets"
 
-    # Assert that the response status code is 200 OK
+    # Define the query parameter
+    params = {"limit": 10}
+
+    # Send a GET request to the endpoint
+    response = requests.get(url, params=params)
+
+    # Check if the response status code is 200 OK
     assert response.status_code == 200
 
-    # Assert that the response headers contain the x-next header
-    assert "x-next" in response.headers
+    # Check if the response contains a paged array of pets
+    assert "pets" in json.loads(response.text)
 
 
-# Test case for creating a new pet
+# Test the createPets endpoint
 def test_create_pet():
-    # Define the payload for the POST request
-    payload = {"id": 123, "name": "Fido", "tag": "dog"}
+    # Define the URL of the endpoint
+    url = base_url + "/pets"
 
-    # Send POST request to /pets endpoint with the payload
-    response = requests.post(BASE_URL + "/pets", json=payload)
+    # Define the payload
+    payload = {"name": "Fluffy", "tag": "cat"}
 
-    # Assert that the response status code is 201 Created
+    # Send a POST request to the endpoint
+    response = requests.post(url, json=payload)
+
+    # Check if the response status code is 201 Created
     assert response.status_code == 201
 
+    # Check if the response body is null
+    assert response.text == ""
 
-# Test case for retrieving info for a specific pet
+
+# Test the showPetById endpoint
 def test_show_pet_by_id():
-    # Send GET request to /pets/{petId} endpoint with petId = 123
-    response = requests.get(BASE_URL + "/pets/123")
+    # Define the URL of the endpoint
+    url = base_url + "/pets/1"
 
-    # Assert that the response status code is 200 OK
+    # Send a GET request to the endpoint
+    response = requests.get(url)
+
+    # Check if the response status code is 200 OK
     assert response.status_code == 200
 
-    # Assert that the response body contains the expected pet properties
-    response_json = response.json()
-    assert response_json["id"] == 123
-    assert response_json["name"] == "Fido"
-    assert response_json["tag"] == "dog"
-
-
-# Run the tests with Pytest
-pytest.main()
+    # Check if the response contains the pet with id 1
+    assert json.loads(response.text)["id"] == 1
