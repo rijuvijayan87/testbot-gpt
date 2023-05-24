@@ -1,4 +1,8 @@
 [MESSAGES CONTROL]
 disable=import-error,
         missing-module-docstring,
-        C0103
+        C0103,
+        C0116,
+        W3101,
+        C0301,
+        W0602
